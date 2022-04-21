@@ -163,49 +163,26 @@ rmw_take_response(
     dds_SampleInfoSeq_delete(sample_infos);
     dds_UnsignedLongSeq_delete(sample_sizes);
   } else {
-    dds_DataSeq * params = dds_DataSeq_create(1);
-    if (params == nullptr) {
-      RMW_SET_ERROR_MSG("failed to create params sequence");
-      dds_DataSeq_delete(data_values);
-      dds_SampleInfoSeq_delete(sample_infos);
-      dds_UnsignedLongSeq_delete(sample_sizes);
-      return RMW_RET_ERROR;
-    }
-
-    dds_ReturnCode_t ret = dds_DataReader_raw_take_params(
+    dds_ReturnCode_t ret = dds_DataReader_raw_take_w_sampleinfoex(
       response_reader, dds_HANDLE_NIL, data_values, sample_infos, sample_sizes, 1,
-      dds_ANY_SAMPLE_STATE, dds_ANY_VIEW_STATE, dds_ANY_INSTANCE_STATE, params);
-
-    dds_WriteParams_t * wparam = reinterpret_cast<dds_WriteParams_t *>(dds_DataSeq_get(params, 0));
-    if (wparam == nullptr) {
-      RMW_SET_ERROR_MSG("failed to take write params");
-      dds_DataReader_raw_return_loan_params(
-        response_reader, data_values, sample_infos, sample_sizes, params);
-      dds_DataSeq_delete(data_values);
-      dds_SampleInfoSeq_delete(sample_infos);
-      dds_UnsignedLongSeq_delete(sample_sizes);
-      dds_DataSeq_delete(params);
-      return RMW_RET_ERROR;
-    }
+      dds_ANY_SAMPLE_STATE, dds_ANY_VIEW_STATE, dds_ANY_INSTANCE_STATE);
 
     if (ret == dds_RETCODE_NO_DATA) {
-      dds_DataReader_raw_return_loan_params(
-        response_reader, data_values, sample_infos, sample_sizes, params);
+      dds_DataReader_raw_return_loan(
+        response_reader, data_values, sample_infos, sample_sizes);
       dds_DataSeq_delete(data_values);
       dds_SampleInfoSeq_delete(sample_infos);
       dds_UnsignedLongSeq_delete(sample_sizes);
-      dds_DataSeq_delete(params);
       return RMW_RET_OK;
     }
 
     if (ret != dds_RETCODE_OK) {
       RMW_SET_ERROR_MSG("failed to take data");
-      dds_DataReader_raw_return_loan_params(
-        response_reader, data_values, sample_infos, sample_sizes, params);
+      dds_DataReader_raw_return_loan(
+        response_reader, data_values, sample_infos, sample_sizes);
       dds_DataSeq_delete(data_values);
       dds_SampleInfoSeq_delete(sample_infos);
       dds_UnsignedLongSeq_delete(sample_sizes);
-      dds_DataSeq_delete(params);
       return RMW_RET_ERROR;
     }
 
@@ -213,20 +190,21 @@ rmw_take_response(
     if (sample_info->valid_data) {
       void * sample = dds_DataSeq_get(data_values, 0);
       if (sample == nullptr) {
-        dds_DataReader_raw_return_loan_params(
-          response_reader, data_values, sample_infos, sample_sizes, params);
+        dds_DataReader_raw_return_loan(
+          response_reader, data_values, sample_infos, sample_sizes);
         dds_DataSeq_delete(data_values);
         dds_SampleInfoSeq_delete(sample_infos);
         dds_UnsignedLongSeq_delete(sample_sizes);
-        dds_DataSeq_delete(params);
         return RMW_RET_ERROR;
       }
       uint32_t size = dds_UnsignedLongSeq_get(sample_sizes, 0);
       int64_t sequence_number;
       int8_t client_guid[16] = {0};
 
-      dds_guid_to_ros_guid(wparam->related_sample_identity->writer_guid, client_guid);
-      dds_sn_to_ros_sn(&wparam->related_sample_identity->sequence_number, &sequence_number);
+      //dds_guid_to_ros_guid(wparam->related_sample_identity->writer_guid, client_guid);
+      //dds_sn_to_ros_sn(&wparam->related_sample_identity->sequence_number, &sequence_number);
+      dds_guid_to_ros_guid2((int8_t*)&((dds_SampleInfoEx*)sample_info)->src_guid, client_guid);
+      dds_sn_to_ros_sn2(((dds_SampleInfoEx*)sample_info)->seq, &sequence_number);
 
       bool res = deserialize_response_enhanced(
         type_support->data,
@@ -238,12 +216,11 @@ rmw_take_response(
 
       if (!res) {
         // Error message already set
-        dds_DataReader_raw_return_loan_params(
-          response_reader, data_values, sample_infos, sample_sizes, params);
+        dds_DataReader_raw_return_loan(
+          response_reader, data_values, sample_infos, sample_sizes);
         dds_DataSeq_delete(data_values);
         dds_SampleInfoSeq_delete(sample_infos);
         dds_UnsignedLongSeq_delete(sample_sizes);
-        dds_DataSeq_delete(params);
         return RMW_RET_ERROR;
       }
 
@@ -258,12 +235,11 @@ rmw_take_response(
       }
     }
 
-    dds_DataReader_raw_return_loan_params(
-      response_reader, data_values, sample_infos, sample_sizes, params);
+    dds_DataReader_raw_return_loan(
+      response_reader, data_values, sample_infos, sample_sizes);
     dds_DataSeq_delete(data_values);
     dds_SampleInfoSeq_delete(sample_infos);
     dds_UnsignedLongSeq_delete(sample_sizes);
-    dds_DataSeq_delete(params);
   }
 
   *taken = true;
@@ -375,18 +351,23 @@ rmw_send_response(
       return RMW_RET_ERROR;
     }
 
-    dds_WriteParams_t * wparam =
-      reinterpret_cast<dds_WriteParams_t *>(malloc(sizeof(dds_WriteParams_t)));
-    wparam->related_sample_identity =
-      reinterpret_cast<dds_SampleIdentity_t *>(malloc(sizeof(dds_SampleIdentity_t)));
-    ros_sn_to_dds_sn(
-      request_header->sequence_number,
-      &wparam->related_sample_identity->sequence_number);
-    ros_guid_to_dds_guid(
-      request_header->writer_guid,
-      &wparam->related_sample_identity->writer_guid);
+    //dds_WriteParams_t * wparam =
+    //  reinterpret_cast<dds_WriteParams_t *>(malloc(sizeof(dds_WriteParams_t)));
+    //wparam->related_sample_identity =
+    //  reinterpret_cast<dds_SampleIdentity_t *>(malloc(sizeof(dds_SampleIdentity_t)));
+    //ros_sn_to_dds_sn(
+    //  request_header->sequence_number,
+    //  &wparam->related_sample_identity->sequence_number);
+    //ros_guid_to_dds_guid(
+    //  request_header->writer_guid,
+    //  &wparam->related_sample_identity->writer_guid);
+    dds_SampleInfoEx sampleinfo_ex;
+    memset(&sampleinfo_ex, 0, sizeof(dds_SampleInfoEx));
+    ros_sn_to_dds_sn2(request_header->sequence_number, &sampleinfo_ex.seq);
+    ros_guid_to_dds_guid2(request_header->writer_guid, (int8_t*)&sampleinfo_ex.src_guid);
 
-    if (dds_DataWriter_raw_write_params(response_writer, dds_response, size, wparam) !=
+    if (dds_DataWriter_raw_write_w_sampleinfoex(response_writer, dds_response, size, &sampleinfo_ex) != 
+    //if (dds_DataWriter_raw_write_params(response_writer, dds_response, size, wparam) !=
       dds_RETCODE_OK)
     {
       RMW_SET_ERROR_MSG("failed to send response");
@@ -394,8 +375,8 @@ rmw_send_response(
       return RMW_RET_ERROR;
     }
     free(dds_response);
-    free(wparam->sample_identity);
-    free(wparam);
+    //free(wparam->sample_identity);
+    //free(wparam);
   }
 
   return RMW_RET_OK;

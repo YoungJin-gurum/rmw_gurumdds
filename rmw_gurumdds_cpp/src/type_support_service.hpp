@@ -1016,12 +1016,26 @@ ros_guid_to_dds_guid(int8_t * guid_ros, dds_GUID_t * guid_dds)
 }
 
 inline void
+ros_guid_to_dds_guid2(int8_t * guid_ros, int8_t * guid_dds)
+{
+  memcpy(guid_dds, guid_ros, 12);
+  memcpy(&guid_dds[12], &guid_ros[12], 4);
+}
+
+inline void
 dds_guid_to_ros_guid(dds_GUID_t guid_dds, int8_t * guid_ros)
 {
   auto prefix_size = sizeof(guid_dds.prefix);
   auto entityId_size = sizeof(guid_dds.entityId);
   memcpy(guid_ros, &(guid_dds.prefix), prefix_size);
   memcpy(&guid_ros[prefix_size], &(guid_dds.entityId), entityId_size);
+}
+
+inline void
+dds_guid_to_ros_guid2(int8_t* guid_dds, int8_t * guid_ros)
+{
+  memcpy(guid_ros, guid_dds, 12);
+  memcpy(&guid_ros[12], &guid_dds[12], 4);
 }
 
 inline void
@@ -1032,8 +1046,21 @@ ros_sn_to_dds_sn(int64_t sn_ros, dds_SequenceNumber_t * sn_dds)
 }
 
 inline void
+ros_sn_to_dds_sn2(int64_t sn_ros, uint64_t* sn_dds)
+{
+  *sn_dds = ((sn_ros) & 0xFFFFFFFF00000000LL) >> 32;
+  *sn_dds = *sn_dds | ((sn_ros & 0x00000000FFFFFFFFLL) << 32);
+}
+
+inline void
 dds_sn_to_ros_sn(dds_SequenceNumber_t * sn_dds, int64_t * sn_ros)
 {
   *sn_ros = ((int64_t)(sn_dds)->high) << 32 | (sn_dds)->low;
+}
+
+inline void
+dds_sn_to_ros_sn2(uint64_t sn_dds, int64_t * sn_ros)
+{
+  *sn_ros = ((sn_dds & 0x00000000FFFFFFFF) << 32) | ((sn_dds & 0xFFFFFFFF00000000) >> 32);
 }
 #endif  // TYPE_SUPPORT_SERVICE_HPP_
