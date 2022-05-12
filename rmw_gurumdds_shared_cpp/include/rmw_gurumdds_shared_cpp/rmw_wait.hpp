@@ -260,18 +260,25 @@ shared__rmw_wait(
     CHECK_ATTACH(ret);
   }
 
+  std::unordered_map<void*,bool> gc_m;
   if (guard_conditions != nullptr) {
     for (size_t i = 0; i < guard_conditions->guard_condition_count; ++i) {
       dds_GuardCondition * guard_condition =
         static_cast<dds_GuardCondition *>(guard_conditions->guard_conditions[i]);
+      if (gc_m.find(guard_condition) == gc_m.end())
+        gc_m.insert(std::make_pair<void*, bool>(guard_condition, false));
+
       if (guard_condition == nullptr) {
         RMW_SET_ERROR_MSG("guard condition handle is null");
         return RMW_RET_ERROR;
       }
 
-      dds_ReturnCode_t ret = dds_WaitSet_attach_condition(
-        dds_wait_set, reinterpret_cast<dds_Condition *>(guard_condition));
-      CHECK_ATTACH(ret);
+      if (!gc_m[guard_condition]) {
+        gc_m[guard_condition] = true;
+        dds_ReturnCode_t ret = dds_WaitSet_attach_condition(
+          dds_wait_set, reinterpret_cast<dds_Condition *>(guard_condition));
+        CHECK_ATTACH(ret);
+      }
     }
   }
 
@@ -465,9 +472,12 @@ shared__rmw_wait(
         guard_conditions->guard_conditions[i] = 0;
       }
 
-      rmw_ret_t rmw_ret_code = __detach_condition(dds_wait_set, condition);
-      if (rmw_ret_code != RMW_RET_OK) {
-        return rmw_ret_code;
+      if (gc_m[(void*)condition]) {
+        gc_m[(void*)condition] = false;
+        rmw_ret_t rmw_ret_code = __detach_condition(dds_wait_set, condition);
+        if (rmw_ret_code != RMW_RET_OK) {
+          return rmw_ret_code;
+        }
       }
     }
   }
