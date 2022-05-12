@@ -260,7 +260,7 @@ shared__rmw_wait(
     CHECK_ATTACH(ret);
   }
 
-  std::unordered_map<void*,bool> gc_m;
+  std::unordered_map<void *, bool> gc_m;
   if (guard_conditions != nullptr) {
     for (size_t i = 0; i < guard_conditions->guard_condition_count; ++i) {
       dds_GuardCondition * guard_condition =
