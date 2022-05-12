@@ -265,9 +265,9 @@ shared__rmw_wait(
     for (size_t i = 0; i < guard_conditions->guard_condition_count; ++i) {
       dds_GuardCondition * guard_condition =
         static_cast<dds_GuardCondition *>(guard_conditions->guard_conditions[i]);
-      if (gc_m.find(guard_condition) == gc_m.end())
-        gc_m.insert(std::make_pair<void*, bool>(guard_condition, false));
-
+      if (gc_m.find(guard_condition) == gc_m.end()) {
+        gc_m.insert(std::pair<void *, bool>(guard_condition, false));
+      }
       if (guard_condition == nullptr) {
         RMW_SET_ERROR_MSG("guard condition handle is null");
         return RMW_RET_ERROR;
