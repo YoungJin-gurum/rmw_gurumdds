@@ -472,8 +472,8 @@ shared__rmw_wait(
         guard_conditions->guard_conditions[i] = 0;
       }
 
-      if (gc_m[(void*)condition]) {
-        gc_m[(void*)condition] = false;
+      if (gc_m[reinterpret_cast<void *>(condition)]) {
+        gc_m[reinterpret_cast<void *>(condition)] = false;
         rmw_ret_t rmw_ret_code = __detach_condition(dds_wait_set, condition);
         if (rmw_ret_code != RMW_RET_OK) {
           return rmw_ret_code;
