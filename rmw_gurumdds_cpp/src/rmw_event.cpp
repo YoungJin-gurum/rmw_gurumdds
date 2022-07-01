@@ -14,7 +14,7 @@
 
 #include "rmw/rmw.h"
 #include "rmw_gurumdds_shared_cpp/rmw_common.hpp"
-#include "rmw_gurumdds_cpp/identifier.hpp"
+#include "rmw_gurumdds_shared_cpp/identifier.hpp"
 
 extern "C"
 {
@@ -25,7 +25,7 @@ rmw_publisher_event_init(
   rmw_event_type_t event_type)
 {
   return shared__rmw_init_event(
-    gurum_gurumdds_identifier,
+    RMW_GURUMDDS_ID,
     rmw_event,
     publisher->implementation_identifier,
     publisher->data,
@@ -39,7 +39,7 @@ rmw_subscription_event_init(
   rmw_event_type_t event_type)
 {
   return shared__rmw_init_event(
-    gurum_gurumdds_identifier,
+    RMW_GURUMDDS_ID,
     rmw_event,
     subscription->implementation_identifier,
     subscription->data,
@@ -52,6 +52,6 @@ rmw_take_event(
   void * event_info,
   bool * taken)
 {
-  return shared__rmw_take_event(gurum_gurumdds_identifier, event_handle, event_info, taken);
+  return shared__rmw_take_event(RMW_GURUMDDS_ID, event_handle, event_info, taken);
 }
 }  // extern "C"

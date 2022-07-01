@@ -18,7 +18,7 @@
 
 #include "rmw_gurumdds_shared_cpp/rmw_common.hpp"
 
-#include "rmw_gurumdds_cpp/identifier.hpp"
+#include "rmw_gurumdds_shared_cpp/identifier.hpp"
 
 extern "C"
 {
@@ -29,20 +29,20 @@ rmw_create_guard_condition(rmw_context_t * context)
   RMW_CHECK_TYPE_IDENTIFIERS_MATCH(
     init context,
     context->implementation_identifier,
-    gurum_gurumdds_identifier,
+    RMW_GURUMDDS_ID,
     return nullptr);
-  return shared__rmw_create_guard_condition(gurum_gurumdds_identifier);
+  return shared__rmw_create_guard_condition(RMW_GURUMDDS_ID);
 }
 
 rmw_ret_t
 rmw_destroy_guard_condition(rmw_guard_condition_t * guard_condition)
 {
-  return shared__rmw_destroy_guard_condition(gurum_gurumdds_identifier, guard_condition);
+  return shared__rmw_destroy_guard_condition(RMW_GURUMDDS_ID, guard_condition);
 }
 
 rmw_ret_t
 rmw_trigger_guard_condition(const rmw_guard_condition_t * guard_condition)
 {
-  return shared__rmw_trigger_guard_condition(gurum_gurumdds_identifier, guard_condition);
+  return shared__rmw_trigger_guard_condition(RMW_GURUMDDS_ID, guard_condition);
 }
 }  // extern "C"

@@ -14,13 +14,13 @@
 
 #include "rmw/rmw.h"
 
-#include "rmw_gurumdds_cpp/identifier.hpp"
+#include "rmw_gurumdds_shared_cpp/identifier.hpp"
 
 extern "C"
 {
 const char *
 rmw_get_implementation_identifier()
 {
-  return gurum_gurumdds_identifier;
+  return RMW_GURUMDDS_ID;
 }
 }  // extern "C"

@@ -33,6 +33,7 @@
 #include "rmw/sanity_checks.h"
 #include "rmw/convert_rcutils_ret_to_rmw_ret.h"
 
+#include "rmw_gurumdds_shared_cpp/identifier.hpp"
 #include "rmw_gurumdds_shared_cpp/dds_include.hpp"
 #include "rmw_gurumdds_shared_cpp/types.hpp"
 #include "rmw_gurumdds_shared_cpp/rmw_common.hpp"
@@ -612,7 +613,7 @@ _get_node_names(
     }
 
     RCUTILS_LOG_DEBUG_NAMED(
-      "rmw_gurumdds_cpp", "node found: %s %s", namespace_.c_str(), name.c_str());
+      RMW_GURUMDDS_ID, "node found: %s %s", namespace_.c_str(), name.c_str());
 
     n++;
   }
@@ -698,7 +699,7 @@ fail:
   rcutils_ret = rcutils_string_array_fini(&node_list);
   if (rcutils_ret != RCUTILS_RET_OK) {
     RCUTILS_LOG_ERROR_NAMED(
-      "rmw_gurumdds_cpp",
+      RMW_GURUMDDS_ID,
       "failed to cleanup during error handling: %s", rcutils_get_error_string().str);
     rcutils_reset_error();
   }
@@ -706,7 +707,7 @@ fail:
   rcutils_ret = rcutils_string_array_fini(&ns_list);
   if (rcutils_ret != RCUTILS_RET_OK) {
     RCUTILS_LOG_ERROR_NAMED(
-      "rmw_gurumdds_cpp",
+      RMW_GURUMDDS_ID,
       "failed to cleanup during error handling: %s", rcutils_get_error_string().str);
     rcutils_reset_error();
   }
@@ -714,7 +715,7 @@ fail:
   rcutils_ret = rcutils_string_array_fini(&enclave_list);
   if (rcutils_ret != RCUTILS_RET_OK) {
     RCUTILS_LOG_ERROR_NAMED(
-      "rmw_gurumdds_cpp",
+      RMW_GURUMDDS_ID,
       "failed to cleanup during error handling: %s", rcutils_get_error_string().str);
     rcutils_reset_error();
   }
@@ -723,7 +724,7 @@ fail:
     rcutils_ret = rcutils_string_array_fini(node_names);
     if (rcutils_ret != RCUTILS_RET_OK) {
       RCUTILS_LOG_ERROR_NAMED(
-        "rmw_gurumdds_cpp",
+        RMW_GURUMDDS_ID,
         "failed to cleanup during error handling; %s", rcutils_get_error_string().str);
       rcutils_reset_error();
     }
@@ -733,7 +734,7 @@ fail:
     rcutils_ret = rcutils_string_array_fini(node_namespaces);
     if (rcutils_ret != RCUTILS_RET_OK) {
       RCUTILS_LOG_ERROR_NAMED(
-        "rmw_gurumdds_cpp",
+        RMW_GURUMDDS_ID,
         "failed to cleanup during error handling; %s", rcutils_get_error_string().str);
       rcutils_reset_error();
     }
@@ -743,7 +744,7 @@ fail:
     rcutils_ret = rcutils_string_array_fini(enclaves);
     if (rcutils_ret != RCUTILS_RET_OK) {
       RCUTILS_LOG_ERROR_NAMED(
-        "rmw_gurumdds_cpp",
+        RMW_GURUMDDS_ID,
         "failed to cleanup during error handling; %s", rcutils_get_error_string().str);
       rcutils_reset_error();
     }

@@ -28,7 +28,7 @@
 #include "rmw_gurumdds_shared_cpp/types.hpp"
 #include "rmw_gurumdds_shared_cpp/qos.hpp"
 #include "rmw_gurumdds_shared_cpp/namespace_prefix.hpp"
-#include "rmw_gurumdds_cpp/identifier.hpp"
+#include "rmw_gurumdds_shared_cpp/identifier.hpp"
 #include "rmw_gurumdds_cpp/types.hpp"
 
 #include "rcutils/types.h"
@@ -74,7 +74,7 @@ rmw_create_publisher(
     return nullptr;
   }
 
-  if (node->implementation_identifier != gurum_gurumdds_identifier) {
+  if (node->implementation_identifier != RMW_GURUMDDS_ID) {
     RMW_SET_ERROR_MSG("node handle not from this implementation");
     return nullptr;
   }
@@ -252,11 +252,11 @@ rmw_create_publisher(
     goto fail;
   }
 
-  publisher_info->implementation_identifier = gurum_gurumdds_identifier;
+  publisher_info->implementation_identifier = RMW_GURUMDDS_ID;
   publisher_info->publisher = dds_publisher;
   publisher_info->topic_writer = topic_writer;
   publisher_info->rosidl_message_typesupport = type_support;
-  publisher_info->publisher_gid.implementation_identifier = gurum_gurumdds_identifier;
+  publisher_info->publisher_gid.implementation_identifier = RMW_GURUMDDS_ID;
   publisher_info->sequence_number = 0;
 
   static_assert(
@@ -275,7 +275,7 @@ rmw_create_publisher(
     goto fail;
   }
 
-  rmw_publisher->implementation_identifier = gurum_gurumdds_identifier;
+  rmw_publisher->implementation_identifier = RMW_GURUMDDS_ID;
   rmw_publisher->data = publisher_info;
   rmw_publisher->topic_name = reinterpret_cast<const char *>(rmw_allocate(strlen(topic_name) + 1));
   if (rmw_publisher->topic_name == nullptr) {
@@ -298,7 +298,7 @@ rmw_create_publisher(
   std::this_thread::sleep_for(std::chrono::milliseconds(5));
 
   RCUTILS_LOG_DEBUG_NAMED(
-    "rmw_gurumdds_cpp",
+    RMW_GURUMDDS_ID,
     "Created publisher with topic '%s' on node '%s%s%s'",
     topic_name, node->namespace_,
     node->namespace_[strlen(node->namespace_) - 1] == '/' ? "" : "/", node->name);
@@ -412,7 +412,7 @@ rmw_publisher_wait_for_all_acked(const rmw_publisher_t * publisher, rmw_time_t w
   RMW_CHECK_ARGUMENT_FOR_NULL(publisher, RMW_RET_INVALID_ARGUMENT);
   RMW_CHECK_TYPE_IDENTIFIERS_MATCH(
     publisher,
-    publisher->implementation_identifier, gurum_gurumdds_identifier,
+    publisher->implementation_identifier, RMW_GURUMDDS_ID,
     return RMW_RET_INCORRECT_RMW_IMPLEMENTATION);
 
   GurumddsPublisherInfo * publisher_info = static_cast<GurumddsPublisherInfo *>(publisher->data);
@@ -440,13 +440,13 @@ rmw_destroy_publisher(rmw_node_t * node, rmw_publisher_t * publisher)
   RMW_CHECK_ARGUMENT_FOR_NULL(node, RMW_RET_INVALID_ARGUMENT);
   RMW_CHECK_TYPE_IDENTIFIERS_MATCH(
     node handle,
-    node->implementation_identifier, gurum_gurumdds_identifier,
+    node->implementation_identifier, RMW_GURUMDDS_ID,
     return RMW_RET_INCORRECT_RMW_IMPLEMENTATION);
 
   RMW_CHECK_ARGUMENT_FOR_NULL(publisher, RMW_RET_INVALID_ARGUMENT);
   RMW_CHECK_TYPE_IDENTIFIERS_MATCH(
     publisher handle,
-    publisher->implementation_identifier, gurum_gurumdds_identifier,
+    publisher->implementation_identifier, RMW_GURUMDDS_ID,
     return RMW_RET_INCORRECT_RMW_IMPLEMENTATION);
 
   auto node_info = static_cast<GurumddsNodeInfo *>(node->data);
@@ -491,7 +491,7 @@ rmw_destroy_publisher(rmw_node_t * node, rmw_publisher_t * publisher)
     publisher->data = nullptr;
     if (publisher->topic_name != nullptr) {
       RCUTILS_LOG_DEBUG_NAMED(
-        "rmw_gurumdds_cpp",
+        RMW_GURUMDDS_ID,
         "Deleted publisher with topic '%s' on node '%s%s%s'",
         publisher->topic_name, node->namespace_,
         node->namespace_[strlen(node->namespace_) - 1] == '/' ? "" : "/", node->name);
@@ -515,7 +515,7 @@ rmw_get_gid_for_publisher(const rmw_publisher_t * publisher, rmw_gid_t * gid)
   RMW_CHECK_TYPE_IDENTIFIERS_MATCH(
     publisher handle,
     publisher->implementation_identifier,
-    gurum_gurumdds_identifier,
+    RMW_GURUMDDS_ID,
     return RMW_RET_INCORRECT_RMW_IMPLEMENTATION);
 
   const GurumddsPublisherInfo * info =
@@ -590,7 +590,7 @@ rmw_publish(
   RMW_CHECK_TYPE_IDENTIFIERS_MATCH(
     publisher,
     publisher->implementation_identifier,
-    gurum_gurumdds_identifier,
+    RMW_GURUMDDS_ID,
     return RMW_RET_INCORRECT_RMW_IMPLEMENTATION);
 
   auto info = static_cast<GurumddsPublisherInfo *>(publisher->data);
@@ -662,7 +662,7 @@ rmw_publish(
     return RMW_RET_ERROR;
   }
   const char * topic_name = dds_Topic_get_name(dds_DataWriter_get_topic(topic_writer));
-  RCUTILS_LOG_DEBUG_NAMED("rmw_gurumdds_cpp", "Published data on topic %s", topic_name);
+  RCUTILS_LOG_DEBUG_NAMED(RMW_GURUMDDS_ID, "Published data on topic %s", topic_name);
 
   free(dds_message);
 
@@ -685,7 +685,7 @@ rmw_publish_serialized_message(
   RMW_CHECK_TYPE_IDENTIFIERS_MATCH(
     publisher,
     publisher->implementation_identifier,
-    gurum_gurumdds_identifier,
+    RMW_GURUMDDS_ID,
     return RMW_RET_INCORRECT_RMW_IMPLEMENTATION);
 
   auto info = static_cast<GurumddsPublisherInfo *>(publisher->data);
@@ -727,7 +727,7 @@ rmw_publish_serialized_message(
     return RMW_RET_ERROR;
   }
   const char * topic_name = dds_Topic_get_name(dds_DataWriter_get_topic(topic_writer));
-  RCUTILS_LOG_DEBUG_NAMED("rmw_gurumdds_cpp", "Published data on topic %s", topic_name);
+  RCUTILS_LOG_DEBUG_NAMED(RMW_GURUMDDS_ID, "Published data on topic %s", topic_name);
 
   return RMW_RET_OK;
 }

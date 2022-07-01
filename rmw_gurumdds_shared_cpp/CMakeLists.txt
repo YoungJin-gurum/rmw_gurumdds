@@ -41,6 +41,7 @@ add_library(
   SHARED
   src/demangle.cpp
   src/event_converter.cpp
+  src/identifier.cpp
   src/names_and_types_helpers.cpp
   src/namespace_prefix.cpp
   src/qos.cpp

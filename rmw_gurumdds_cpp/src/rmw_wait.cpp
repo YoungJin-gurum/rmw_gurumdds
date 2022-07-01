@@ -18,7 +18,7 @@
 
 #include "rmw_gurumdds_shared_cpp/rmw_common.hpp"
 #include "rmw_gurumdds_shared_cpp/rmw_wait.hpp"
-#include "rmw_gurumdds_cpp/identifier.hpp"
+#include "rmw_gurumdds_shared_cpp/identifier.hpp"
 #include "rmw_gurumdds_cpp/types.hpp"
 
 extern "C"
@@ -26,13 +26,13 @@ extern "C"
 rmw_wait_set_t *
 rmw_create_wait_set(rmw_context_t * context, size_t max_conditions)
 {
-  return shared__rmw_create_wait_set(gurum_gurumdds_identifier, context, max_conditions);
+  return shared__rmw_create_wait_set(RMW_GURUMDDS_ID, context, max_conditions);
 }
 
 rmw_ret_t
 rmw_destroy_wait_set(rmw_wait_set_t * wait_set)
 {
-  return shared__rmw_destroy_wait_set(gurum_gurumdds_identifier, wait_set);
+  return shared__rmw_destroy_wait_set(RMW_GURUMDDS_ID, wait_set);
 }
 
 rmw_ret_t
@@ -46,7 +46,7 @@ rmw_wait(
   const rmw_time_t * wait_timeout)
 {
   return shared__rmw_wait<GurumddsSubscriberInfo, GurumddsServiceInfo, GurumddsClientInfo>(
-    gurum_gurumdds_identifier, subscriptions, guard_conditions,
+    RMW_GURUMDDS_ID, subscriptions, guard_conditions,
     services, clients, events, wait_set, wait_timeout);
 }
 }  // extern "C"

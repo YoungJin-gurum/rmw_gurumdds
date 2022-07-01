@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "rmw_gurumdds_cpp/identifier.hpp"
+#include "rmw_gurumdds_shared_cpp/identifier.hpp"
+#include "rmw_gurumdds_shared_cpp/visibility_control.h"
 
-const char * const gurum_gurumdds_identifier = "rmw_gurumdds_cpp";
+const char * const RMW_GURUMDDS_ID = "rmw_gurumdds_cpp";

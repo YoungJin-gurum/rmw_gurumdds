@@ -21,7 +21,7 @@
 
 #include "rmw_gurumdds_shared_cpp/rmw_common.hpp"
 
-#include "rmw_gurumdds_cpp/identifier.hpp"
+#include "rmw_gurumdds_shared_cpp/identifier.hpp"
 
 extern "C"
 {
@@ -32,6 +32,6 @@ rmw_get_service_names_and_types(
   rmw_names_and_types_t * service_names_and_types)
 {
   return shared__rmw_get_service_names_and_types(
-    gurum_gurumdds_identifier, node, allocator, service_names_and_types);
+    RMW_GURUMDDS_ID, node, allocator, service_names_and_types);
 }
 }  // extern "C"

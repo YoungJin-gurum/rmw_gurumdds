@@ -23,6 +23,7 @@
 #include "rmw/impl/cpp/macros.hpp"
 #include "rmw/impl/cpp/key_value.hpp"
 
+#include "rmw_gurumdds_shared_cpp/identifier.hpp"
 #include "rmw_gurumdds_shared_cpp/demangle.hpp"
 #include "rmw_gurumdds_shared_cpp/guid.hpp"
 #include "rmw_gurumdds_shared_cpp/namespace_prefix.hpp"
@@ -113,7 +114,7 @@ _get_endpoint_info_by_topic(
       rret = rmw_topic_endpoint_info_fini(&ep_info, allocator); \
       if (rret != RMW_RET_OK) { \
         RCUTILS_LOG_ERROR_NAMED( \
-          "rmw_gurumdds_cpp", \
+          RMW_GURUMDDS_ID, \
           "rmw_topic_endpoint_info_fini failed: %s", \
           rmw_get_error_string().str); \
         rmw_reset_error(); \
@@ -122,7 +123,7 @@ _get_endpoint_info_by_topic(
         rret = rmw_topic_endpoint_info_fini(&info, allocator); \
         if (rret != RMW_RET_OK) { \
           RCUTILS_LOG_ERROR_NAMED( \
-            "rmw_gurumdds_cpp", \
+            RMW_GURUMDDS_ID, \
             "rmw_topic_endpoint_info_fini failed: %s", \
             rmw_get_error_string().str); \
           rmw_reset_error(); \
@@ -206,7 +207,7 @@ _get_endpoint_info_by_topic(
         rmw_ret_t rret = rmw_topic_endpoint_info_fini(&info, allocator);
         if (rret != RMW_RET_OK) {
           RCUTILS_LOG_ERROR_NAMED(
-            "rmw_gurumdds_cpp",
+            RMW_GURUMDDS_ID,
             "rmw_topic_endpoint_info_fini failed: %s",
             rmw_get_error_string().str);
           rmw_reset_error();

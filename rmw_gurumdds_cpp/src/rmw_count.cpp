@@ -24,7 +24,7 @@
 
 #include "rmw_gurumdds_shared_cpp/rmw_common.hpp"
 
-#include "rmw_gurumdds_cpp/identifier.hpp"
+#include "rmw_gurumdds_shared_cpp/identifier.hpp"
 
 extern "C"
 {
@@ -34,7 +34,7 @@ rmw_count_publishers(
   const char * topic_name,
   size_t * count)
 {
-  return shared__rmw_count_publishers(gurum_gurumdds_identifier, node, topic_name, count);
+  return shared__rmw_count_publishers(RMW_GURUMDDS_ID, node, topic_name, count);
 }
 
 rmw_ret_t
@@ -43,6 +43,6 @@ rmw_count_subscribers(
   const char * topic_name,
   size_t * count)
 {
-  return shared__rmw_count_subscribers(gurum_gurumdds_identifier, node, topic_name, count);
+  return shared__rmw_count_subscribers(RMW_GURUMDDS_ID, node, topic_name, count);
 }
 }  // extern "C"

@@ -21,7 +21,7 @@
 
 #include "rmw_gurumdds_shared_cpp/rmw_common.hpp"
 
-#include "rmw_gurumdds_cpp/identifier.hpp"
+#include "rmw_gurumdds_shared_cpp/identifier.hpp"
 
 extern "C"
 {
@@ -35,7 +35,7 @@ rmw_get_subscriber_names_and_types_by_node(
   rmw_names_and_types_t * topic_names_and_types)
 {
   return shared__rmw_get_subscriber_names_and_types_by_node(
-    gurum_gurumdds_identifier, node, allocator, node_name, node_namespace,
+    RMW_GURUMDDS_ID, node, allocator, node_name, node_namespace,
     no_demangle, topic_names_and_types);
 }
 
@@ -49,7 +49,7 @@ rmw_get_publisher_names_and_types_by_node(
   rmw_names_and_types_t * topic_names_and_types)
 {
   return shared__rmw_get_publisher_names_and_types_by_node(
-    gurum_gurumdds_identifier, node, allocator, node_name, node_namespace,
+    RMW_GURUMDDS_ID, node, allocator, node_name, node_namespace,
     no_demangle, topic_names_and_types);
 }
 
@@ -62,7 +62,7 @@ rmw_get_service_names_and_types_by_node(
   rmw_names_and_types_t * service_names_and_types)
 {
   return shared__rmw_get_service_names_and_types_by_node(
-    gurum_gurumdds_identifier, node, allocator, node_name, node_namespace,
+    RMW_GURUMDDS_ID, node, allocator, node_name, node_namespace,
     service_names_and_types);
 }
 
@@ -75,7 +75,7 @@ rmw_get_client_names_and_types_by_node(
   rmw_names_and_types_t * client_names_and_types)
 {
   return shared__rmw_get_client_names_and_types_by_node(
-    gurum_gurumdds_identifier, node, allocator, node_name, node_namespace,
+    RMW_GURUMDDS_ID, node, allocator, node_name, node_namespace,
     client_names_and_types);
 }
 }  // extern "C"

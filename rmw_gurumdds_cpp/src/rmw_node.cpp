@@ -32,7 +32,7 @@
 
 #include "rmw_gurumdds_shared_cpp/rmw_common.hpp"
 
-#include "rmw_gurumdds_cpp/identifier.hpp"
+#include "rmw_gurumdds_shared_cpp/identifier.hpp"
 
 extern "C"
 {
@@ -46,16 +46,16 @@ rmw_create_node(
   RMW_CHECK_TYPE_IDENTIFIERS_MATCH(
     init context,
     context->implementation_identifier,
-    gurum_gurumdds_identifier,
+    RMW_GURUMDDS_ID,
     return nullptr);
   return shared__rmw_create_node(
-    gurum_gurumdds_identifier, context, name, namespace_);
+    RMW_GURUMDDS_ID, context, name, namespace_);
 }
 
 rmw_ret_t
 rmw_destroy_node(rmw_node_t * node)
 {
-  return shared__rmw_destroy_node(gurum_gurumdds_identifier, node);
+  return shared__rmw_destroy_node(RMW_GURUMDDS_ID, node);
 }
 
 const rmw_guard_condition_t *
@@ -71,7 +71,7 @@ rmw_get_node_names(
   rcutils_string_array_t * node_namespaces)
 {
   return shared__rmw_get_node_names(
-    gurum_gurumdds_identifier, node, node_names, node_namespaces);
+    RMW_GURUMDDS_ID, node, node_names, node_namespaces);
 }
 
 rmw_ret_t
@@ -82,6 +82,6 @@ rmw_get_node_names_with_enclaves(
   rcutils_string_array_t * enclaves)
 {
   return shared__rmw_get_node_names_with_enclaves(
-    gurum_gurumdds_identifier, node, node_names, node_namespaces, enclaves);
+    RMW_GURUMDDS_ID, node, node_names, node_namespaces, enclaves);
 }
 }  // extern "C"

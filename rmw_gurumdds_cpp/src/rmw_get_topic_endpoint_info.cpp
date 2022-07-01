@@ -18,7 +18,7 @@
 
 #include "rmw_gurumdds_shared_cpp/rmw_common.hpp"
 
-#include "rmw_gurumdds_cpp/identifier.hpp"
+#include "rmw_gurumdds_shared_cpp/identifier.hpp"
 
 extern "C"
 {
@@ -31,7 +31,7 @@ rmw_get_publishers_info_by_topic(
   rmw_topic_endpoint_info_array_t * publishers_info)
 {
   return shared__rmw_get_publishers_info_by_topic(
-    gurum_gurumdds_identifier, node, allocator, topic_name, no_mangle, publishers_info);
+    RMW_GURUMDDS_ID, node, allocator, topic_name, no_mangle, publishers_info);
 }
 
 rmw_ret_t
@@ -43,6 +43,6 @@ rmw_get_subscriptions_info_by_topic(
   rmw_topic_endpoint_info_array_t * subscriptions_info)
 {
   return shared__rmw_get_subscriptions_info_by_topic(
-    gurum_gurumdds_identifier, node, allocator, topic_name, no_mangle, subscriptions_info);
+    RMW_GURUMDDS_ID, node, allocator, topic_name, no_mangle, subscriptions_info);
 }
 }  // extern "C"

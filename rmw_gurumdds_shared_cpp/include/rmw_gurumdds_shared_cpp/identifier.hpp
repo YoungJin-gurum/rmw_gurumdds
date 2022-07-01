@@ -12,9 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef RMW_GURUMDDS_CPP__IDENTIFIER_HPP_
-#define RMW_GURUMDDS_CPP__IDENTIFIER_HPP_
+#ifndef RMW_GURUMDDS_SHARED_CPP__IDENTIFIER_HPP_
+#define RMW_GURUMDDS_SHARED_CPP__IDENTIFIER_HPP_
 
-extern const char * const gurum_gurumdds_identifier;
+#include "./visibility_control.h"
 
-#endif  // RMW_GURUMDDS_CPP__IDENTIFIER_HPP_
+RMW_GURUMDDS_SHARED_CPP_PUBLIC
+extern const char * const RMW_GURUMDDS_ID;
+
+#endif  // RMW_GURUMDDS_SHARED_CPP__IDENTIFIER_HPP_
