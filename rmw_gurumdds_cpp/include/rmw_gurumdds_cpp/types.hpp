@@ -15,8 +15,24 @@
 #ifndef RMW_GURUMDDS_CPP__TYPES_HPP_
 #define RMW_GURUMDDS_CPP__TYPES_HPP_
 
+#include <mutex>
+
 #include "rmw/rmw.h"
 #include "rmw_gurumdds_shared_cpp/types.hpp"
+
+typedef struct _GurumddsParticipantInfo
+{
+  dds_DomainParticipant * participant{nullptr};
+  GurumddsParticipantListener * part_listener{nullptr};
+
+  // dds_DomainParticipantListener * part_listener;
+
+  dds_Publisher * publisher{nullptr};
+  dds_Subscriber * subscriber{nullptr};
+
+  // Protects creation and destruction of topics, readers and writers
+  mutable std::mutex entity_creation_mutex_;
+} GurumddsParticipantInfo;
 
 typedef struct _GurumddsPublisherInfo : GurumddsEventInfo
 {

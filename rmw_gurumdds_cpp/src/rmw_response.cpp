@@ -19,8 +19,8 @@
 
 #include "rmw_gurumdds_shared_cpp/rmw_common.hpp"
 #include "rmw_gurumdds_shared_cpp/types.hpp"
-
 #include "rmw_gurumdds_shared_cpp/identifier.hpp"
+
 #include "rmw_gurumdds_cpp/types.hpp"
 
 #include "type_support_service.hpp"

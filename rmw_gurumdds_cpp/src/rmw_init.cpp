@@ -15,6 +15,9 @@
 #include "rcutils/logging_macros.h"
 #include "rcutils/strdup.h"
 
+#include "rmw_dds_common/context.hpp"
+#include "rmw_dds_common/msg/participant_entities_info.hpp"
+
 #include "rmw/error_handling.h"
 #include "rmw/impl/cpp/macros.hpp"
 #include "rmw/ret_types.h"
@@ -22,11 +25,7 @@
 
 #include "rmw_gurumdds_shared_cpp/identifier.hpp"
 #include "rmw_gurumdds_shared_cpp/dds_include.hpp"
-
-struct rmw_context_impl_s
-{
-  bool is_shutdown;
-};
+#include "rmw_gurumdds_shared_cpp/rmw_context_impl.hpp"
 
 extern "C"
 {
@@ -229,6 +228,11 @@ rmw_context_fini(rmw_context_t * context)
   if (!context->impl->is_shutdown) {
     RCUTILS_SET_ERROR_MSG("rmw context has not been shutdown");
     return RMW_RET_INVALID_ARGUMENT;
+  }
+
+  if (context->impl->node_count > 0) {
+    RMW_SET_ERROR_MSG("Finalizing a context with active nodes");
+    return RMW_RET_ERROR;
   }
 
   rmw_ret_t ret = rmw_init_options_fini(&context->options);

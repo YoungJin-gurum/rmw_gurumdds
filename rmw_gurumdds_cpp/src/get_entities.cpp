@@ -12,10 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "rmw_gurumdds_shared_cpp/types.hpp"
 #include "rmw_gurumdds_cpp/get_entities.hpp"
-#include "rmw_gurumdds_shared_cpp/identifier.hpp"
 #include "rmw_gurumdds_cpp/types.hpp"
+#include "rmw_gurumdds_shared_cpp/types.hpp"
+#include "rmw_gurumdds_shared_cpp/identifier.hpp"
+#include "rmw_gurumdds_shared_cpp/rmw_context_impl.hpp"
 
 namespace rmw_gurumdds_cpp
 {
@@ -30,7 +31,7 @@ get_participant(rmw_node_t * node)
     return nullptr;
   }
 
-  GurumddsNodeInfo * impl = static_cast<GurumddsNodeInfo *>(node->data);
+  GurumddsNodeInfo * impl = static_cast<GurumddsNodeInfo *>(node->context->impl->participant_info);
   return impl->participant;
 }
 

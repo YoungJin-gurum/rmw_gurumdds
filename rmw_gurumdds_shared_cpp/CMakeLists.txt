@@ -24,6 +24,7 @@ if(NOT GurumDDS_FOUND)
   return()
 endif()
 
+find_package(rcpputils REQUIRED)
 find_package(rcutils REQUIRED)
 find_package(rmw REQUIRED)
 find_package(rmw_dds_common REQUIRED)
@@ -31,8 +32,10 @@ find_package(rmw_dds_common REQUIRED)
 include_directories(include)
 
 ament_export_include_directories(include ${GurumDDS_INCLUDE_DIR})
+ament_export_dependencies(rcpputils)
 ament_export_dependencies(rcutils)
 ament_export_dependencies(rmw)
+ament_export_dependencies(rmw_dds_common)
 
 include_directories(${GurumDDS_INCLUDE_DIR})
 link_directories(${GurumDDS_LIBRARY_DIRS})
@@ -60,6 +63,7 @@ add_library(
 )
 #target_link_libraries(rmw_gurumdds_shared_cpp gurumdds)
 ament_target_dependencies(rmw_gurumdds_shared_cpp
+  "rcpputils"
   "rcutils"
   "rmw"
   "rmw_dds_common"

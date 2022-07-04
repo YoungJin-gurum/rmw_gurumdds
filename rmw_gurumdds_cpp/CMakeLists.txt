@@ -43,6 +43,7 @@ if(NOT rosidl_typesupport_introspection_cpp_FOUND)
 endif()
 
 find_package(rmw REQUIRED)
+find_package(rmw_dds_common REQUIRED)
 find_package(rmw_gurumdds_shared_cpp REQUIRED)
 find_package(rosidl_runtime_c REQUIRED)
 find_package(rosidl_runtime_cpp REQUIRED)
@@ -87,6 +88,7 @@ ament_target_dependencies(rmw_gurumdds_cpp
   "rosidl_typesupport_introspection_cpp"
   "rmw_gurumdds_shared_cpp"
   "rmw"
+  "rmw_dds_common"
   "rosidl_runtime_c"
   "rosidl_runtime_cpp"
   "GurumDDS")
