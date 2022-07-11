@@ -82,7 +82,7 @@ shared__rmw_create_node(
     return nullptr;
   }
 
-  auto common_ctx = static_cast<rmw_dds_common::Context *>(context->impl->common_ctx);
+  auto common_ctx = static_cast<rmw_dds_common::Context *>(&context->impl->common_ctx);
   rmw_dds_common::GraphCache & graph_cache = common_ctx->graph_cache;
   rmw_node_t * node_handle = rmw_node_allocate();
   if (node_handle == nullptr) {
@@ -150,7 +150,7 @@ shared__rmw_destroy_node(const char * implementation_identifier, rmw_node_t * no
     node->implementation_identifier, implementation_identifier,
     return RMW_RET_INCORRECT_RMW_IMPLEMENTATION);
 
-  auto common_ctx = static_cast<rmw_dds_common::Context *>(node->context->impl->common_ctx);
+  auto common_ctx = static_cast<rmw_dds_common::Context *>(&node->context->impl->common_ctx);
   rmw_dds_common::GraphCache & graph_cache = common_ctx->graph_cache;
   {
     std::lock_guard<std::mutex> guard(common_ctx->node_update_mutex);
@@ -180,7 +180,7 @@ shared__rmw_destroy_node(const char * implementation_identifier, rmw_node_t * no
 const rmw_guard_condition_t *
 shared__rmw_node_get_graph_guard_condition(const rmw_node_t * node)
 {
-  auto common_ctx = static_cast<rmw_dds_common::Context *>(node->context->impl->common_ctx);
+  auto common_ctx = static_cast<rmw_dds_common::Context *>(&node->context->impl->common_ctx);
   if (!common_ctx) {
     RMW_SET_ERROR_MSG("common_context is nullptr");
     return nullptr;
@@ -213,7 +213,7 @@ _get_node_names(
     return RMW_RET_INVALID_ARGUMENT;
   }
 
-  auto common_ctx = static_cast<rmw_dds_common::Context *>(node->context->impl->common_ctx);
+  auto common_ctx = static_cast<rmw_dds_common::Context *>(&node->context->impl->common_ctx);
   rcutils_allocator_t allocator = rcutils_get_default_allocator();
 
   return common_ctx->graph_cache.get_node_names(

@@ -24,6 +24,8 @@
 #include "rmw/event.h"
 #include "rmw/topic_endpoint_info_array.h"
 
+#include "rmw_gurumdds_shared_cpp/dds_include.hpp"
+
 RMW_GURUMDDS_SHARED_CPP_PUBLIC
 rmw_guard_condition_t *
 shared__rmw_create_guard_condition(const char * implementation_identifier);
@@ -222,6 +224,19 @@ shared__rmw_node_assert_liveliness(
   const rmw_node_t * node);
 
 RMW_GURUMDDS_SHARED_CPP_PUBLIC
+rmw_publisher_t *
+shared__rmw_create_publisher(
+  rmw_context_impl_t * const ctx,
+  const rmw_node_t * node,
+  dds_DomainParticipant * const participant,
+  dds_Publisher * const pub,
+  const rosidl_message_type_support_t * type_supports,
+  const char * topic_name,
+  const rmw_qos_profile_t * qos_policies,
+  const rmw_publisher_options_t * publisher_options,
+  const bool internal = false);
+
+RMW_GURUMDDS_SHARED_CPP_PUBLIC
 rmw_ret_t
 shared__rmw_get_publishers_info_by_topic(
   const char * implementation_identifier,
@@ -230,6 +245,19 @@ shared__rmw_get_publishers_info_by_topic(
   const char * topic_name,
   bool no_mangle,
   rmw_topic_endpoint_info_array_t * publishers_info);
+
+RMW_GURUMDDS_SHARED_CPP_PUBLIC
+rmw_subscription_t *
+shared__rmw_create_subscription(
+  rmw_context_impl_t * const ctx,
+  const rmw_node_t * node,
+  dds_DomainParticipant * const participant,
+  dds_Subscriber * const sub,
+  const rosidl_message_type_support_t * type_supports,
+  const char * topic_name,
+  const rmw_qos_profile_t * qos_policies,
+  const rmw_subscription_options_t * subscription_options,
+  const bool internal = false);
 
 RMW_GURUMDDS_SHARED_CPP_PUBLIC
 rmw_ret_t

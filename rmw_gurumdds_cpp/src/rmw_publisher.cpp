@@ -29,6 +29,8 @@
 #include "rmw_gurumdds_shared_cpp/qos.hpp"
 #include "rmw_gurumdds_shared_cpp/namespace_prefix.hpp"
 #include "rmw_gurumdds_shared_cpp/identifier.hpp"
+#include "rmw_gurumdds_shared_cpp/rmw_context_impl.hpp"
+
 #include "rmw_gurumdds_cpp/types.hpp"
 
 #include "rcutils/types.h"
@@ -62,12 +64,16 @@ rmw_fini_publisher_allocation(rmw_publisher_allocation_t * allocation)
   return RMW_RET_UNSUPPORTED;
 }
 
-rmw_publisher_t *
-rmw_create_publisher(
+static rmw_publisher_t *
+__rmw_create_publisher(
+  rmw_context_impl_t * const ctx,
   const rmw_node_t * node,
+  dds_DomainParticipant * const participant,
+  dds_Publisher * const pub,
   const rosidl_message_type_support_t * type_supports,
   const char * topic_name, const rmw_qos_profile_t * qos_policies,
-  const rmw_publisher_options_t * publisher_options)
+  const rmw_publisher_options_t * publisher_options,
+  const bool internal)
 {
   if (node == nullptr) {
     RMW_SET_ERROR_MSG("node handle is null");
@@ -105,12 +111,6 @@ rmw_create_publisher(
   GurumddsNodeInfo * node_info = static_cast<GurumddsNodeInfo *>(node->data);
   if (node_info == nullptr) {
     RMW_SET_ERROR_MSG("node info is null");
-    return nullptr;
-  }
-
-  dds_DomainParticipant * participant = node_info->participant;
-  if (participant == nullptr) {
-    RMW_SET_ERROR_MSG("participant handle is null");
     return nullptr;
   }
 
@@ -334,6 +334,28 @@ fail:
   }
 
   return nullptr;
+
+}
+
+rmw_publisher_t *
+rmw_create_publisher(
+  const rmw_node_t * node,
+  const rosidl_message_type_support_t * type_supports,
+  const char * topic_name, const rmw_qos_profile_t * qos_policies,
+  const rmw_publisher_options_t * publisher_options)
+{
+  rmw_context_impl_t * ctx = node->context->impl;
+
+  return __rmw_create_publisher(
+    ctx,
+    node,
+    ctx->participant,
+    ctx->publisher,
+    type_supports,
+    topic_name,
+    qos_policies,
+    publisher_options,
+    ctx->localhost_only);
 }
 
 rmw_ret_t

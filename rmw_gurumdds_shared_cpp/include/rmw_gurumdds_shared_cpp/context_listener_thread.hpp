@@ -12,23 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef RMW_GURUMDDS_CPP__REGISTER_NODE_HPP_
-#define RMW_GURUMDDS_CPP__REGISTER_NODE_HPP_
+#ifndef RMW_GURUMDDS_SHARED_CPP__CONTEXT_LISTENER_THREAD_HPP_
+#define RMW_GURUMDDS_SHARED_CPP__CONTEXT_LISTENER_THREAD_HPP_
 
-#include "rmw/init.h"
-#include "rmw/types.h"
+#include "rmw_gurumdds_shared_cpp/rmw_context_impl.hpp"
 
-namespace rmw_gurumdds_cpp
-{
-
-// Register node to context
 rmw_ret_t
-register_node(rmw_context_t * context);
+discovery_thread_start(rmw_context_impl_t * const ctx);
 
-// Unregister node from context
-rmw_ret_t
-unregister_node(rmw_context_t * context);
-
-}  // namespace rmw_gurumdds_cpp
-
-#endif  // RMW_GURUMDDS_CPP__REGISTER_NODE_HPP_
+#endif  // RMW_GURUMDDS_SHARED_CPP__CONTEXT_LISTENER_THREAD_HPP_

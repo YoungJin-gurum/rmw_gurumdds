@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef RMW_GURUMDDS_CPP__CONTEXT_LISTENER_THREAD_HPP_
-#define RMW_GURUMDDS_CPP__CONTEXT_LISTENER_THREAD_HPP_
+#ifndef RMW_GURUMDDS_SHARED_CPP__GRAPH_CACHE_HPP_
+#define RMW_GURUMDDS_SHARED_CPP__GRAPH_CACHE_HPP_
 
-#include "rmw/init.h"
-
-rmw_ret_t
-run_listener_thread(rmw_context_t * context);
+#include "rmw_gurumdds_shared_cpp/rmw_context_impl.hpp"
 
 rmw_ret_t
-stop_listener_thread(rmw_context_t * context);
+graph_cache_initialize(rmw_context_impl_t * const ctx);
 
-#endif  // RMW_GURUMDDS_CPP__CONTEXT_LISTENER_THREAD_HPP_
+rmw_ret_t
+graph_cache_finalize(rmw_context_impl_t * const ctx);
+
+#endif  // RMW_GURUMDDS_SHARED_CPP__GRAPH_CACHE_HPP_

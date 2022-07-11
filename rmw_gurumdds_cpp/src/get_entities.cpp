@@ -31,8 +31,7 @@ get_participant(rmw_node_t * node)
     return nullptr;
   }
 
-  GurumddsNodeInfo * impl = static_cast<GurumddsNodeInfo *>(node->context->impl->participant_info);
-  return impl->participant;
+  return node->context->impl->participant;
 }
 
 dds_Publisher *
