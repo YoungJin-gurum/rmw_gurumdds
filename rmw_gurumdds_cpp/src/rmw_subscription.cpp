@@ -31,9 +31,10 @@
 #include "rmw_gurumdds_shared_cpp/qos.hpp"
 #include "rmw_gurumdds_shared_cpp/guid.hpp"
 #include "rmw_gurumdds_shared_cpp/namespace_prefix.hpp"
+#include "rmw_gurumdds_shared_cpp/identifier.hpp"
+#include "rmw_gurumdds_shared_cpp/rmw_context_impl.hpp"
 
 #include "rmw_gurumdds_cpp/types.hpp"
-#include "rmw_gurumdds_shared_cpp/identifier.hpp"
 
 #include "type_support_common.hpp"
 #include "type_support_service.hpp"
@@ -63,12 +64,16 @@ rmw_fini_subscription_allocation(rmw_subscription_allocation_t * allocation)
   return RMW_RET_UNSUPPORTED;
 }
 
-rmw_subscription_t *
-rmw_create_subscription(
+static rmw_subscription_t *
+__rmw_create_subscription(
+  rmw_context_impl_t * const ctx,
   const rmw_node_t * node,
+  dds_DomainParticipant * const participant,
+  dds_Subscriber * const sub,
   const rosidl_message_type_support_t * type_supports,
   const char * topic_name, const rmw_qos_profile_t * qos_policies,
-  const rmw_subscription_options_t * subscription_options)
+  const rmw_subscription_options_t * subscription_options,
+  const bool internal)
 {
   if (node == nullptr) {
     RMW_SET_ERROR_MSG("node handle is null");
@@ -106,12 +111,6 @@ rmw_create_subscription(
   GurumddsNodeInfo * node_info = static_cast<GurumddsNodeInfo *>(node->data);
   if (node_info == nullptr) {
     RMW_SET_ERROR_MSG("node info is null");
-    return nullptr;
-  }
-
-  dds_DomainParticipant * participant = node_info->participant;
-  if (participant == nullptr) {
-    RMW_SET_ERROR_MSG("participant handle is null");
     return nullptr;
   }
 
@@ -337,6 +336,27 @@ fail:
   }
 
   return nullptr;
+}
+
+rmw_subscription_t *
+rmw_create_subscription(
+  const rmw_node_t * node,
+  const rosidl_message_type_support_t * type_supports,
+  const char * topic_name, const rmw_qos_profile_t * qos_policies,
+  const rmw_subscription_options_t * subscription_options)
+{
+  rmw_context_impl_t * ctx = node->context->impl;
+
+  return __rmw_create_subscription(
+    ctx,
+    node,
+    ctx->participant,
+    ctx->subscriber,
+    type_supports,
+    topic_name,
+    qos_policies,
+    subscription_options,
+    ctx->localhost_only);
 }
 
 rmw_ret_t

@@ -15,20 +15,103 @@
 #ifndef RMW_GURUMDDS_SHARED_CPP__RMW_CONTEXT_IMPL_HPP_
 #define RMW_GURUMDDS_SHARED_CPP__RMW_CONTEXT_IMPL_HPP_
 
+#include <stdio.h>
+
+#include <limits>
+#include <map>
 #include <mutex>
+#include <regex>
+#include <string>
+
+#include "rmw/error_handling.h"
+#include "rmw/event.h"
+#include "rmw/get_node_info_and_types.h"
+#include "rmw/get_service_names_and_types.h"
+#include "rmw/get_topic_names_and_types.h"
+#include "rmw/get_topic_endpoint_info.h"
+#include "rmw/impl/cpp/macros.hpp"
+#include "rmw/names_and_types.h"
+#include "rmw/topic_endpoint_info_array.h"
+
+#include "rmw_dds_common/context.hpp"
+#include "rmw_dds_common/msg/participant_entities_info.hpp"
+
+#include "rmw_gurumdds_shared_cpp/dds_include.hpp"
+
+#include "rcutils/strdup.h"
 
 struct rmw_context_impl_s
 {
-  /* Pointer to `rmw_dds_common::Context` */
-  void * common_ctx;
-  /// Pointer to `GurumddsParticipantInfo`.
-  void * participant_info;
-  /* Mutex used to protect initialization/destruction. */
-  std::mutex mutex;
+  rmw_dds_common::Context common_ctx;
+  rmw_context_t * base;
+
+  dds_DomainId_t domain_id;
+  dds_DomainParticipant * participant;
+  dds_Publisher * publisher;
+  dds_Subscriber * subscriber;
+
+  dds_DataReader * builtin_participant_datareader;
+  dds_DataReader * builtin_publication_datareader;
+  dds_DataReader * builtin_subscription_datareader;
+
+  bool localhost_only;
+
   /* Participant reference count*/
   size_t node_count{0};
+
+  /* Mutex used to protect initialization/destruction. */
+  std::mutex initialization_mutex;
+
   /* Shutdown flag. */
   bool is_shutdown;
+
+  std::mutex endpoint_mutex;
+
+  explicit rmw_context_impl_s(rmw_context_t * const base)
+  : common_ctx(),
+    base(base),
+    domain_id(base->actual_domain_id),
+    participant(nullptr),
+    publisher(nullptr),
+    subscriber(nullptr),
+    builtin_participant_datareader(nullptr),
+    builtin_publication_datareader(nullptr),
+    builtin_subscription_datareader(nullptr),
+    localhost_only(base->options.localhost_only == RMW_LOCALHOST_ONLY_ENABLED)
+  {
+    /* destructor relies on these being initialized properly */
+    common_ctx.thread_is_running.store(false);
+    common_ctx.graph_guard_condition = nullptr;
+    common_ctx.pub = nullptr;
+    common_ctx.sub = nullptr;
+  }
+
+  ~rmw_context_impl_s()
+  {
+    if (0u != this->node_count) {
+      RCUTILS_LOG_ERROR_NAMED("rmw_gurumdds_shared_cpp", "not all nodes finalized %lu", this->node_count);
+    }
+  }
+
+  // Initializes the participant, if it wasn't done already.
+  // node_count is increased
+  rmw_ret_t
+  initialize_node(const char * node_name, const char * node_namespace, const bool localhost_only);
+
+  // Destroys the participant, when node_count reaches 0.
+  rmw_ret_t
+  finalize_node();
+
+  // Initialize the DomainParticipant associated with the context.
+  rmw_ret_t
+  initialize_participant(const char * node_name, const char * node_namespace, const bool localhost_only);
+
+  // Finalize the DomainParticipant associated with the context.
+  rmw_ret_t
+  finalize_participant();
+
+  rmw_ret_t
+  finalize();
 };
 
 #endif  // RMW_GURUMDDS_SHARED_CPP__RMW_CONTEXT_IMPL_HPP_

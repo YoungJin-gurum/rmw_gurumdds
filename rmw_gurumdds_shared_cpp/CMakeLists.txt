@@ -59,6 +59,9 @@ add_library(
   src/rmw_service_names_and_types.cpp
   src/rmw_topic_names_and_types.cpp
   src/rmw_wait.cpp
+  src/rmw_context_impl.cpp
+  src/discovery.cpp
+  src/graph_cache.cpp
   src/types/custom_listener.cpp
 )
 #target_link_libraries(rmw_gurumdds_shared_cpp gurumdds)
