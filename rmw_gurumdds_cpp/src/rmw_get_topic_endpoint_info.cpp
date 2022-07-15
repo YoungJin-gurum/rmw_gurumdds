@@ -235,7 +235,7 @@ rmw_get_publishers_info_by_topic(
   rmw_topic_endpoint_info_array_t * publishers_info)
 {
   return _get_endpoint_info_by_topic(
-    gurum_gurumdds_identifier,
+    RMW_GURUMDDS_ID,
     node,
     allocator,
     topic_name,
@@ -253,7 +253,7 @@ rmw_get_subscriptions_info_by_topic(
   rmw_topic_endpoint_info_array_t * subscriptions_info)
 {
   return _get_endpoint_info_by_topic(
-    gurum_gurumdds_identifier,
+    RMW_GURUMDDS_ID,
     node,
     allocator,
     topic_name,

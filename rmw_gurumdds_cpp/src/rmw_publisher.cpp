@@ -72,7 +72,7 @@ rmw_create_publisher(
     return nullptr;
   }
 
-  if (node->implementation_identifier != gurum_gurumdds_identifier) {
+  if (node->implementation_identifier != RMW_GURUMDDS_ID) {
     RMW_SET_ERROR_MSG("node handle not from this implementation");
     return nullptr;
   }
@@ -250,11 +250,11 @@ rmw_create_publisher(
     goto fail;
   }
 
-  publisher_info->implementation_identifier = gurum_gurumdds_identifier;
+  publisher_info->implementation_identifier = RMW_GURUMDDS_ID;
   publisher_info->publisher = dds_publisher;
   publisher_info->topic_writer = topic_writer;
   publisher_info->rosidl_message_typesupport = type_support;
-  publisher_info->publisher_gid.implementation_identifier = gurum_gurumdds_identifier;
+  publisher_info->publisher_gid.implementation_identifier = RMW_GURUMDDS_ID;
   publisher_info->sequence_number = 0;
 
   static_assert(
@@ -273,7 +273,7 @@ rmw_create_publisher(
     goto fail;
   }
 
-  rmw_publisher->implementation_identifier = gurum_gurumdds_identifier;
+  rmw_publisher->implementation_identifier = RMW_GURUMDDS_ID;
   rmw_publisher->data = publisher_info;
   rmw_publisher->topic_name = reinterpret_cast<const char *>(rmw_allocate(strlen(topic_name) + 1));
   if (rmw_publisher->topic_name == nullptr) {
@@ -410,7 +410,7 @@ rmw_publisher_wait_for_all_acked(const rmw_publisher_t * publisher, rmw_time_t w
   RMW_CHECK_ARGUMENT_FOR_NULL(publisher, RMW_RET_INVALID_ARGUMENT);
   RMW_CHECK_TYPE_IDENTIFIERS_MATCH(
     publisher,
-    publisher->implementation_identifier, gurum_gurumdds_identifier,
+    publisher->implementation_identifier, RMW_GURUMDDS_ID,
     return RMW_RET_INCORRECT_RMW_IMPLEMENTATION);
 
   GurumddsPublisherInfo * publisher_info = static_cast<GurumddsPublisherInfo *>(publisher->data);
@@ -438,13 +438,13 @@ rmw_destroy_publisher(rmw_node_t * node, rmw_publisher_t * publisher)
   RMW_CHECK_ARGUMENT_FOR_NULL(node, RMW_RET_INVALID_ARGUMENT);
   RMW_CHECK_TYPE_IDENTIFIERS_MATCH(
     node handle,
-    node->implementation_identifier, gurum_gurumdds_identifier,
+    node->implementation_identifier, RMW_GURUMDDS_ID,
     return RMW_RET_INCORRECT_RMW_IMPLEMENTATION);
 
   RMW_CHECK_ARGUMENT_FOR_NULL(publisher, RMW_RET_INVALID_ARGUMENT);
   RMW_CHECK_TYPE_IDENTIFIERS_MATCH(
     publisher handle,
-    publisher->implementation_identifier, gurum_gurumdds_identifier,
+    publisher->implementation_identifier, RMW_GURUMDDS_ID,
     return RMW_RET_INCORRECT_RMW_IMPLEMENTATION);
 
   auto node_info = static_cast<GurumddsNodeInfo *>(node->data);
@@ -513,7 +513,7 @@ rmw_get_gid_for_publisher(const rmw_publisher_t * publisher, rmw_gid_t * gid)
   RMW_CHECK_TYPE_IDENTIFIERS_MATCH(
     publisher handle,
     publisher->implementation_identifier,
-    gurum_gurumdds_identifier,
+    RMW_GURUMDDS_ID,
     return RMW_RET_INCORRECT_RMW_IMPLEMENTATION);
 
   const GurumddsPublisherInfo * info =
@@ -588,7 +588,7 @@ rmw_publish(
   RMW_CHECK_TYPE_IDENTIFIERS_MATCH(
     publisher,
     publisher->implementation_identifier,
-    gurum_gurumdds_identifier,
+    RMW_GURUMDDS_ID,
     return RMW_RET_INCORRECT_RMW_IMPLEMENTATION);
 
   auto info = static_cast<GurumddsPublisherInfo *>(publisher->data);
@@ -683,7 +683,7 @@ rmw_publish_serialized_message(
   RMW_CHECK_TYPE_IDENTIFIERS_MATCH(
     publisher,
     publisher->implementation_identifier,
-    gurum_gurumdds_identifier,
+    RMW_GURUMDDS_ID,
     return RMW_RET_INCORRECT_RMW_IMPLEMENTATION);
 
   auto info = static_cast<GurumddsPublisherInfo *>(publisher->data);
