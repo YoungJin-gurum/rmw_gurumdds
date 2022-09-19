@@ -825,9 +825,9 @@ rmw_take_response(
     return RMW_RET_ERROR;
   }
 
-  if (client_info->ctx->service_mapping_basic) {
-    dds_ReturnCode_t ret = dds_RETCODE_OK;
+  dds_ReturnCode_t ret = dds_RETCODE_OK;
 
+  if (client_info->ctx->service_mapping_basic) {
     while (ret == dds_RETCODE_OK) {
       ret = dds_DataReader_raw_take(
         response_reader, dds_HANDLE_NIL, data_values, sample_infos, sample_sizes, 1,
@@ -894,17 +894,14 @@ rmw_take_response(
           memcpy(request_header->request_id.writer_guid, client_guid, 16);
 
           *taken = true;
-          break;
         }
       }
+      dds_DataReader_raw_return_loan(response_reader, data_values, sample_infos, sample_sizes);
+      if (*taken) {
+        break;
+      }
     }
-    dds_DataReader_raw_return_loan(response_reader, data_values, sample_infos, sample_sizes);
-    dds_DataSeq_delete(data_values);
-    dds_SampleInfoSeq_delete(sample_infos);
-    dds_UnsignedLongSeq_delete(sample_sizes);
   } else {
-    dds_ReturnCode_t ret = dds_RETCODE_OK;
-
     while (ret == dds_RETCODE_OK) {
       ret = dds_DataReader_raw_take_w_sampleinfoex(
         response_reader, dds_HANDLE_NIL, data_values, sample_infos, sample_sizes, 1,
@@ -971,15 +968,18 @@ rmw_take_response(
           memcpy(request_header->request_id.writer_guid, client_guid, 16);
 
           *taken = true;
-          break;
         }
       }
+      dds_DataReader_raw_return_loan(response_reader, data_values, sample_infos, sample_sizes);
+      if (*taken) {
+        break;
+      }
     }
-    dds_DataReader_raw_return_loan(response_reader, data_values, sample_infos, sample_sizes);
-    dds_DataSeq_delete(data_values);
-    dds_SampleInfoSeq_delete(sample_infos);
-    dds_UnsignedLongSeq_delete(sample_sizes);
   }
+
+  dds_DataSeq_delete(data_values);
+  dds_SampleInfoSeq_delete(sample_infos);
+  dds_UnsignedLongSeq_delete(sample_sizes);
 
   return RMW_RET_OK;
 }

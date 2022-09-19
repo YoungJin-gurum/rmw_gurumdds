@@ -211,7 +211,8 @@ void on_participant_changed(
     std::string enclave_str;
     bool enclave_found;
     dds_ReturnCode_t rc =
-      __get_user_data_key(const_cast<dds_ParticipantBuiltinTopicData *>(data), 
+      __get_user_data_key(
+      const_cast<dds_ParticipantBuiltinTopicData *>(data),
       "securitycontext", enclave_str, enclave_found);
     if (RMW_RET_OK != rc) {
       RMW_SET_ERROR_MSG("failed to parse user data for enclave");
@@ -224,7 +225,7 @@ void on_participant_changed(
 
     if (RMW_RET_OK != graph_add_participant(ctx, &dp_guid, enclave)) {
       RMW_SET_ERROR_MSG("failed to assert remote participant in graph");
-    }    
+    }
   }
 }
 

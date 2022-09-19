@@ -297,7 +297,7 @@ graph_cache_initialize(rmw_context_impl_t * const ctx)
 
   rmw_publisher_options_t publisher_options = rmw_get_default_publisher_options();
   rmw_subscription_options_t subscription_options = rmw_get_default_subscription_options();
-  
+
   // This is currently not implemented in gurumdds
   subscription_options.ignore_local_publications = true;
 
